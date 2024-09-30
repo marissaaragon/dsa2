@@ -1,8 +1,4 @@
 import csv
-from HashTable import *
-
-from HashTable import HashTable
-
 
 class Package:
     def __init__(self, id, address, city, state, zip_code, deadline, weight, status):
@@ -39,6 +35,4 @@ def load_packages(file, package_table):
             package = Package(id, address, city, state, zip_code, deadline, weight, status)
             package_table.insert(id, package)
 
-package_hash_table = HashTable()
-load_packages("CSV/WGU Package.csv", package_hash_table)
 
