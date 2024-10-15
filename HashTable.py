@@ -1,8 +1,3 @@
-class HashEntry:
-    def __init__(self, key, item):
-        self.key = key
-        self.item = item
-
 class HashTable:
     def __init__(self, initial_capacity=10):
         self.map = []
@@ -38,7 +33,7 @@ class HashTable:
     def delete(self, key):
         key_hash = self._get_hash(key)
 
-        if self.map[key_hash] is None:
+        if not self.map[key_hash]:
             return False
         for i in range(0, len(self.map[key_hash])):
             if self.map[key_hash][i][0] == key:
