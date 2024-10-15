@@ -10,17 +10,13 @@ class HashTable:
     def insert(self, key, value):
         key_hash = self._get_hash(key)
         key_value = [key, value]
-
-        if self.map[key_hash] is None:
-            self.map[key_hash] = list([key_value])
-            return True
-        else:
-            for pair in self.map[key_hash]:
-                if pair[0] == key:
-                    pair[1] = value
-                    return True
-                self.map[key_hash].append(key_value)
+        bucket = self.map[key_hash]
+        for pair in bucket:
+            if pair[0] == key:
+                pair[1] = value
                 return True
+        bucket.append(key_value)
+        return True
 
     def get(self, key):
         key_hash = self._get_hash(key)

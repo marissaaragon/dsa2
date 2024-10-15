@@ -43,13 +43,14 @@ def nearest_neighbor(truck):
     not_delivered = []
     for package_id in truck.packages:
         package = package_hash.get(package_id)
-        not_delivered.append(package)
+        if package is None:
+            print(f"Package not found in hash table: {package_id}")
+        else:
+            not_delivered.append(package)
     truck.packages.clear()
-
     while len(not_delivered) > 0:
         next_address = 5000
         next_package = None
-
         for package in not_delivered:
             package_address = get_address(package.address)
             truck_address = get_address(truck.address)
@@ -71,10 +72,10 @@ def nearest_neighbor(truck):
         truck.address = next_package.address
         print(f"Delivering to package {next_package.package_id}: new truck address = {truck.address}, mileage = {truck.mileage}")
 
+# Call nearest_neighbor for your trucks
 nearest_neighbor(truck1)
 nearest_neighbor(truck2)
 nearest_neighbor(truck3)
-
 
 
 
