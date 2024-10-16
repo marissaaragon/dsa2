@@ -80,7 +80,7 @@ nearest_neighbor(truck1)
 nearest_neighbor(truck2)
 nearest_neighbor(truck3)
 
-def get_status_at_time(user_time):
+def get_status_all(user_time):
     user_time = datetime.strptime(user_time, "%H:%M").time()
     for package_id in range(1,41):
         package = package_hash.get(package_id)
@@ -91,13 +91,30 @@ def get_status_at_time(user_time):
         else:
             print(f"Package {package.package_id} is at the hub (not yet departed).")
 
+def get_status_package(package_id, user_time):
+    user_time = datetime.strptime(user_time, "%H:%M").time()
+    package = package_hash.get(package_id)
+    if package is None:
+        print(f"Package {package_id} not found.")
+        return
+    # Compare package delivery and departure times with the input time
+    delivery_time = (datetime.combine(datetime.today(), time(0, 0)) + package.delivery_time).time() if package.delivery_time else None
+    departure_time = package.departure_time if package.departure_time else None
+
+    if delivery_time and delivery_time <= user_time:
+        print(f"Package {package.package_id} was delivered at {delivery_time}.")
+    elif departure_time and departure_time <= user_time:
+        print(f"Package {package.package_id} is en route (departed at {departure_time}).")
+    else:
+        print(f"Package {package.package_id} is at the hub (not yet departed).")
+
 
 class Main:
     print("Welcome to the WGU Parcel Service")
     print(f"The total mileage of the trip is {truck1.mileage+truck2.mileage+truck3.mileage}")
 
     while True:
-        user_input = input("Enter package to get package information, or status for package status at specific time, exit to exit program: ")
+        user_input = input("Type package to get package information, status for package status at specific time, or exit to exit program: ")
 
         if user_input == "package":
             package_id = input("Enter package id: ")
@@ -110,8 +127,16 @@ class Main:
                 print(f"Package found: {package}")
                 package.status = "At Hub"
         elif user_input == "status":
-            user_time = input("Enter time you want to check (HH:MM format): ")
-            get_status_at_time(user_time)
+            user_choice = input("Would you like to see the status for a specific package? (y/n): ")
+            if user_choice == "y":
+                package_id = input("Enter package id: ")
+                package_id = int(package_id)
+                user_time = input("Enter the time you want to check (HH:MM format): ")
+                get_status_package(package_id, user_time)
+            elif user_choice == "n":
+                user_time = input("Enter the time you want to check (HH:MM format): ")
+                get_status_all(user_time)
+
         elif user_input == "exit":
             break
 
