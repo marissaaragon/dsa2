@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 class Truck:
     def __init__(self, capacity, speed, load, packages, mileage, address, depart_time):
         self.capacity = capacity
@@ -7,6 +9,7 @@ class Truck:
         self.mileage = mileage
         self.address = address
         self.depart_time = depart_time
+        self.time = timedelta()
 
     def __str__(self):
         return "%s, %s, %s, %s, %s, %s, %s" % (self.capacity, self.speed, self.load, self.packages, self.mileage,
