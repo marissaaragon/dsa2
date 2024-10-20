@@ -47,6 +47,14 @@ def update_address(event_time):
         else:
             print("Failed to update address for package #9. Address not found.")
 
+def get_address_at_time(package_id, check_time):
+    update_time = time(10, 20)
+    if package_id == 9 and check_time < update_time:
+        return "300 State St"  # Old address
+    if package_id == 9:
+        return "410 S State St"  # New address
+    return None
+
 # Creating 3 trucks, loading them with packages, set starting address, set depart time
 truck1 = Truck(16, 18, None, [1, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40], 0.0, "4001 South 700 East", time(8,0))
 truck2 = Truck(16, 18, None, [3, 9, 12, 17, 18, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39], 0.0, "4001 South 700 East", time(10,20))
@@ -99,18 +107,19 @@ def nearest_neighbor(truck):
 # Call nearest_neighbor algorithm for each truck
 nearest_neighbor(truck1)
 nearest_neighbor(truck3)
-update_address("10:20") # used to update package 9 before the truck delivers it
+update_address("10:20") # used to update package 9 before the truck departs
 nearest_neighbor(truck2)
 
 # Function to get status for all packages in each truck
-def get_status_all(user_time):
-    user_time = datetime.strptime(user_time, "%H:%M").time()
+def get_status_all(user_time_str):
+    user_time = datetime.strptime(user_time_str, "%H:%M").time()
     print(f"Checking all package statuses at {user_time}:")
     for i, truck in enumerate([truck1, truck2, truck3], start=1):
         print(f"\nTruck {i}:")
         for package_id in truck.packages:
             package = package_hash.get(package_id)
-            print(f"Package ID: {package.package_id}, Address: {package.address}, Deadline: {package.deadline}, Truck: {i}")
+            address = get_address_at_time(package_id, user_time) if package_id == 9 else package.address
+            print(f"Package ID: {package.package_id}, Address: {address}, Deadline: {package.deadline}, Truck: {i}")
             if package.delivery_time and (datetime.combine(datetime.today(), time(0, 0)) + package.delivery_time).time() <= user_time:
                 print(f"  Status: Delivered at {(datetime.combine(datetime.today(), time(0, 0)) + package.delivery_time).time()}")
             elif package.departure_time and package.departure_time <= user_time:
