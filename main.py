@@ -99,7 +99,7 @@ def nearest_neighbor(truck):
 # Call nearest_neighbor algorithm for each truck
 nearest_neighbor(truck1)
 nearest_neighbor(truck3)
-update_address("10:20")
+update_address("10:20") # used to update package 9 before the truck delivers it
 nearest_neighbor(truck2)
 
 # Function to get status for all packages in each truck
