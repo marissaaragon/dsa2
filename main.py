@@ -4,7 +4,7 @@ from Package import *
 from HashTable import *
 from Truck import Truck
 
-#Loading packages
+# Initialize and load packages into hash table
 package_hash = HashTable()
 load_packages("CSV/WGU Package.csv", package_hash)
 
@@ -40,16 +40,18 @@ truck1 = Truck(16, 18, None, [1, 13, 14, 15, 16, 19, 20, 29, 30, 31, 34, 37, 40]
 truck2 = Truck(16, 18, None, [3, 6, 9, 12, 17, 18, 21, 22, 23, 24, 26, 27, 35, 36, 38, 39], 0.0, "4001 South 700 East", time(10,20))
 truck3 = Truck(16, 18, None, [2, 4, 5, 7, 8, 10, 11, 25, 28, 32, 33], 0.0, "4001 South 700 East", time(9,5))
 
-# Algorithm to
+# Algorithm to create order to deliver packages
 def nearest_neighbor(truck):
-    not_delivered = []
+    not_delivered = [] # List of not delivered packages
     for package_id in truck.packages:
-        package = package_hash.get(package_id)
-        if package is None:
+        package = package_hash.get(package_id) # Get package from hash table
+        if package is None: # Handling if package is not found in the hash table
             print(f"Package not found in hash table: {package_id}")
         else:
-            not_delivered.append(package)
-    truck.packages.clear()
+            not_delivered.append(package) # Else add package to not delivered
+    truck.packages.clear() # Clearing truck packages so they can be added in correct order later
+
+    # Continue loop while there are still undelivered packages
     while len(not_delivered) > 0:
         next_address = 5000
         next_package = None
@@ -60,6 +62,8 @@ def nearest_neighbor(truck):
                 print(f"Package address not found: {package.address}")
             if truck_address is None:
                 print(f"Truck address not found: {truck.address}")
+
+            # Calculate distance between truck address and package address
             if package_address is not None and truck_address is not None:
                 distance = get_distance(truck_address, package_address)
                 if distance <= next_address:
@@ -67,6 +71,8 @@ def nearest_neighbor(truck):
                     next_package = package
         if next_package is None:
             break
+
+        # Add the closest package to delivery list
         truck.packages.append(next_package.package_id)
         not_delivered.remove(next_package)
         truck.mileage += next_address
@@ -88,7 +94,7 @@ def get_status_all(user_time):
     user_time = datetime.strptime(user_time, "%H:%M").time()
     print(f"Checking status at {user_time}:")
     for i, truck in enumerate([truck1, truck2, truck3], start=1):
-        print(f"\nTruck {i} (Current Address: {truck.address}):")
+        print(f"\nTruck {i}:")
         for package_id in truck.packages:
             package = package_hash.get(package_id)
             if package.delivery_time and (datetime.combine(datetime.today(), time(0, 0)) + package.delivery_time).time() <= user_time:
@@ -100,7 +106,7 @@ def get_status_all(user_time):
 
 # Function to get status of a specific package that a user chooses
 def get_status_package(package_id, user_time):
-    user_time = datetime.strptime(user_time, "%H:%M").time()
+    user_time = datetime.strptime(user_time, "%H:%M").time() # Get time 24 hour time
     package = package_hash.get(package_id)
     if package is None:
         print(f"Package {package_id} not found.")
@@ -124,7 +130,7 @@ class Main:
     print(f"Truck 3 total mileage is {truck3.mileage}")
     while True:
         user_input = input("Type package to get package information, status for package status at specific time, or exit to exit program: ").lower()
-
+        # Get package information
         if user_input == "package":
             package_id = input("Enter package id: ")
             package_id = int(package_id)
@@ -135,7 +141,7 @@ class Main:
                 package.status = "Delivered"
                 print(f"Package found: {package}")
                 package.status = "At Hub"
-
+        # Get location status of packages
         elif user_input == "status":
             user_choice = input("Would you like to see the status for a specific package? (y/n): ")
             if user_choice == "y":
@@ -146,7 +152,7 @@ class Main:
             elif user_choice == "n":
                 user_time = input("Enter the time you want to check (HH:MM format): ")
                 get_status_all(user_time)
-
+        # End program
         elif user_input == "exit":
             break
 
